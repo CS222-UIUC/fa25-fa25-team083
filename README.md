@@ -1,3 +1,6 @@
+Our team's project board: https://github.com/orgs/CS222-UIUC/projects/46/views/1
+
+
 The development branch has been set-up. There are two ways from what I gathered you can code. 
 
 ## 1) Using GitHub's Codespace
