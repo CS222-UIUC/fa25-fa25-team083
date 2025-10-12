@@ -1,0 +1,13 @@
+name: team083
+services:
+  api:
+    build:
+      context: ./backend          #build from backend folder
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env            #holds NASA_API_KEY, etc.
+    ports:
+      - "${PORT:-8001}:8000"      #host:container (defaults to 8001→8000)
+    volumes:
+      - ./backend:/app            #live-reload dev mount
+    command: python app.py

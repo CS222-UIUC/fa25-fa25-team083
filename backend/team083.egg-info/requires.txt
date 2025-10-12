@@ -1,0 +1,9 @@
+flask
+requests
+python-dotenv
+
+[dev]
+pytest
+pytest-cov
+ruff
+black
