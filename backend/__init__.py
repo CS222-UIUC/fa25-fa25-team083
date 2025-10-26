@@ -1,1 +1,1 @@
-from backend import nasa_insight, nasa_apod #Should fix the issue with pytest not being able to see the backend tests fromt the project root
+# this needs to be empty so that it treats backend as a package so pytest passes from root

@@ -1,4 +1,4 @@
-from backend import nasa_insight, nasa_apod #Should fix the issue with pytest not being able to see the backend tests fromt the project root
+from backend import nasa_insight #Should fix the issue with pytest not being able to see the backend tests fromt the project root
 
 
 def test_truth():
