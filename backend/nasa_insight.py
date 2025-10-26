@@ -38,6 +38,76 @@ def get_latest_sol():
     return max(sols)
 
 
+def get_temp_avg():
+    """
+    Getting average temp for the latest sol day.
+    Should be celsius
+    Returns none if not present
+    """
+    try:  # Doing a try and except just in case parsing fails in these function calls
+        resp = requests.get(
+            "https://api.nasa.gov/insight_weather/",
+            params={
+                "api_key": nasa_apod.getNASA_APIKey(),
+                "feedtype": "json",
+                "ver": "1.0",
+            },
+            timeout=10,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+
+        sols = data.get("sol_keys", [])
+        if not sols:
+            return None
+
+        latest = get_latest_sol()
+
+        at = data.get(latest, {}).get("AT")
+        if not at or "av" not in at:
+            return None
+        return float(at["av"])
+    except Exception:
+        return None
+
+
+def get_wind_avg():
+    """
+    Getting average wind for the latest sol day. Should be in m/s.
+    We can later implement backend helpers to convert if necessary otherwise front end can convert if needed
+    Returns none if not present
+    """
+    try:
+        resp = requests.get(
+            "https://api.nasa.gov/insight_weather/",
+            params={
+                "api_key": nasa_apod.getNASA_APIKey(),
+                "feedtype": "json",
+                "ver": "1.0",
+            },
+            timeout=10,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+
+        sols = data.get("sol_keys", [])
+        if not sols:
+            return None
+
+        latest = get_latest_sol()
+        if not latest:
+            return None
+        latest = str(latest)
+
+        hws = data.get(latest, {}).get("HWS")
+        if not hws or "av" not in hws:
+            return None
+
+        return float(hws["av"])
+    except Exception:
+        return None
+
+
 if __name__ == "__main__":
     """
     Testing function calls locally
@@ -47,3 +117,5 @@ if __name__ == "__main__":
     print(sols)
     print()
     print(get_latest_sol())
+    print(get_temp_avg())
+    print(get_wind_avg())
