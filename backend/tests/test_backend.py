@@ -31,20 +31,18 @@ class FakeResp:
 
 
 def test_get_sols_success(monkeypatch):
-    def fake_get(*args, **kwargs):
-        return FakeResp(200, {"sol_keys": ["1", "2", "3"]})
-
-    monkeypatch.setattr(nasa_insight.requests, "get", fake_get)
+    monkeypatch.setattr(
+        nasa_insight,
+        "get_insight_data",
+        lambda: {"sol_keys": ["1", "2", "3"]},
+    )
 
     sols = nasa_insight.get_sols()
     assert sols == ["1", "2", "3"]
 
 
 def test_get_sols_failure_returns_empty(monkeypatch):
-    def fake_get(*args, **kwargs):
-        raise RuntimeError("network down")
-
-    monkeypatch.setattr(nasa_insight.requests, "get", fake_get)
+    monkeypatch.setattr(nasa_insight, "get_insight_data", lambda: {})
 
     assert nasa_insight.get_sols() == []
 
@@ -56,29 +54,21 @@ def test_get_latest_sol(monkeypatch):
 
 def test_get_temp_avg_success(monkeypatch):
     payload = {"sol_keys": ["3"], "3": {"AT": {"av": -5.25}}}
-
-    def fake_get(*args, **kwargs):
-        return FakeResp(200, payload)
-
-    monkeypatch.setattr(nasa_insight.requests, "get", fake_get)
+    monkeypatch.setattr(nasa_insight, "get_insight_data", lambda: payload)
     monkeypatch.setattr(nasa_insight, "get_latest_sol", lambda: "3")
 
     assert nasa_insight.get_temp_avg() == -5.25
 
 
 def test_get_temp_avg_missing_returns_none(monkeypatch):
-    def fake_get1(*a, **k):
-        return FakeResp(200, {})
-
-    monkeypatch.setattr(nasa_insight.requests, "get", fake_get1)
+    # case 1: no data at all
+    monkeypatch.setattr(nasa_insight, "get_insight_data", lambda: {})
+    monkeypatch.setattr(nasa_insight, "get_latest_sol", lambda: None)
     assert nasa_insight.get_temp_avg() is None
 
+    # case 2: sol exists but AT is missing
     payload2 = {"sol_keys": ["3"], "3": {}}
-
-    def fake_get2(*a, **k):
-        return FakeResp(200, payload2)
-
-    monkeypatch.setattr(nasa_insight.requests, "get", fake_get2)
+    monkeypatch.setattr(nasa_insight, "get_insight_data", lambda: payload2)
     monkeypatch.setattr(nasa_insight, "get_latest_sol", lambda: "3")
     assert nasa_insight.get_temp_avg() is None
 
@@ -86,10 +76,7 @@ def test_get_temp_avg_missing_returns_none(monkeypatch):
 def test_get_wind_avg_success(monkeypatch):
     payload = {"sol_keys": ["42"], "42": {"HWS": {"av": 7.8}}}
 
-    def fake_get(*args, **kwargs):
-        return FakeResp(200, payload)
-
-    monkeypatch.setattr(nasa_insight.requests, "get", fake_get)
+    monkeypatch.setattr(nasa_insight, "get_insight_data", lambda: payload)
     monkeypatch.setattr(nasa_insight, "get_latest_sol", lambda: "42")
 
     assert nasa_insight.get_wind_avg() == 7.8
@@ -98,18 +85,14 @@ def test_get_wind_avg_success(monkeypatch):
 def test_get_wind_avg_missing_returns_none(monkeypatch):
     payload = {"sol_keys": ["7"], "7": {}}
 
-    def fake_get(*a, **k):
-        return FakeResp(200, payload)
-
-    monkeypatch.setattr(nasa_insight.requests, "get", fake_get)
+    monkeypatch.setattr(nasa_insight, "get_insight_data", lambda: payload)
     monkeypatch.setattr(nasa_insight, "get_latest_sol", lambda: "7")
 
     assert nasa_insight.get_wind_avg() is None
 
 
 def test_get_wind_avg_exception_returns_none(monkeypatch):
-    def fake_get(*a, **k):
-        raise TimeoutError()
+    monkeypatch.setattr(nasa_insight, "get_insight_data", lambda: {})
+    monkeypatch.setattr(nasa_insight, "get_latest_sol", lambda: "999")
 
-    monkeypatch.setattr(nasa_insight.requests, "get", fake_get)
     assert nasa_insight.get_wind_avg() is None
