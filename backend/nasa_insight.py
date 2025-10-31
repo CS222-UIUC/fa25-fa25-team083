@@ -5,7 +5,10 @@ import time
 import json
 
 INSIGHT_URL = "https://api.nasa.gov/insight_weather/"
-CACHE_PATH = os.path.join(os.path.dirname(__file__), "insight_cache.json") #should be cached in /backend
+CACHE_PATH = os.path.join(
+    os.path.dirname(__file__), "insight_cache.json"
+)  # should be cached in /backend
+
 
 def load_cached_data():
     """
@@ -17,13 +20,16 @@ def load_cached_data():
         return None
 
     try:
-        with open(CACHE_PATH, "r", encoding = "utf-8") as f:
+        with open(CACHE_PATH, "r", encoding="utf-8") as f:
             cached = json.load(f)
-        if time.time() - cached.get("ts", 0) > (60 * 10): #(60 * 10) is 60 seconds * 10 for 10 minutes
-            return None #cache is old
+        if time.time() - cached.get("ts", 0) > (
+            60 * 10
+        ):  # (60 * 10) is 60 seconds * 10 for 10 minutes
+            return None  # cache is old
         return cached.get("data")
     except Exception:
         return None
+
 
 def fetch_insight_api():
     """
@@ -33,21 +39,20 @@ def fetch_insight_api():
     """
     resp = requests.get(
         INSIGHT_URL,
-        params = {
+        params={
             "api_key": nasa_apod.getNASA_APIKey(),
             "feedtype": "json",
             "ver": "1.0",
-
         },
-        timeout = 10,
+        timeout=10,
     )
     resp.raise_for_status()
     data = resp.json()
-    try: 
-        with open(CACHE_PATH, "w", encoding = "utf-8") as f:
+    try:
+        with open(CACHE_PATH, "w", encoding="utf-8") as f:
             json.dump({"ts": time.time(), "data": data}, f)
     except Exception:
-        pass #HAS TO BE PASS in case writing fails
+        pass  # HAS TO BE PASS in case writing fails
     return data
 
 
@@ -60,12 +65,11 @@ def get_insight_data():
     data = load_cached_data()
     if data is not None:
         return data
-    
-    try: 
+
+    try:
         return fetch_insight_api()
     except Exception:
         return {}
-    
 
 
 def get_sols():
@@ -99,13 +103,13 @@ def get_temp_avg():
     data = get_insight_data()
     latest = get_latest_sol()
 
-    ls = data.get(str(latest), {}) # The keys in the json file are strings
+    ls = data.get(str(latest), {})  # The keys in the json file are strings
     at = ls.get("AT")
     if not at or "av" not in at:
-        return None 
+        return None
     return float(at["av"])
-   
-    
+
+
 def get_temp_min():
     """
     Getting min temp for the latest sol day.
@@ -115,14 +119,13 @@ def get_temp_min():
     data = get_insight_data()
     latest = get_latest_sol()
 
-    ls = data.get(str(latest), {}) # The keys in the json file are strings
+    ls = data.get(str(latest), {})  # The keys in the json file are strings
     at = ls.get("AT")
     if not at or "mn" not in at:
-        return None 
+        return None
     return float(at["mn"])
 
-  
-        
+
 def get_temp_max():
     """
     Getting max temp for the latest sol day.
@@ -132,13 +135,12 @@ def get_temp_max():
     data = get_insight_data()
     latest = get_latest_sol()
 
-    ls = data.get(str(latest), {}) # The keys in the json file are strings
+    ls = data.get(str(latest), {})  # The keys in the json file are strings
     at = ls.get("AT")
     if not at or "mx" not in at:
-        return None 
+        return None
     return float(at["mx"])
 
-    
 
 def get_wind_avg():
     """
@@ -149,13 +151,13 @@ def get_wind_avg():
     data = get_insight_data()
     latest = get_latest_sol()
 
-    ls = data.get(str(latest), {}) # The keys in the json file are strings
+    ls = data.get(str(latest), {})  # The keys in the json file are strings
     hws = ls.get("HWS")
     if not hws or "av" not in hws:
-        return None 
+        return None
     return float(hws["av"])
 
-   
+
 def get_wind_min():
     """
     Getting min wind for the latest sol day. Should be in m/s.
@@ -164,14 +166,13 @@ def get_wind_min():
     data = get_insight_data()
     latest = get_latest_sol()
 
-    ls = data.get(str(latest), {}) # The keys in the json file are strings
+    ls = data.get(str(latest), {})  # The keys in the json file are strings
     hws = ls.get("HWS")
     if not hws or "mn" not in hws:
-        return None 
+        return None
     return float(hws["mn"])
 
 
-    
 def get_wind_max():
     """
     Getting max wind for the latest sol day. Should be in m/s.
@@ -180,11 +181,12 @@ def get_wind_max():
     data = get_insight_data()
     latest = get_latest_sol()
 
-    ls = data.get(str(latest), {}) # The keys in the json file are strings
+    ls = data.get(str(latest), {})  # The keys in the json file are strings
     hws = ls.get("HWS")
     if not hws or "mx" not in hws:
-        return None 
+        return None
     return float(hws["mx"])
+
 
 def get_pressure_avg():
     """
@@ -196,6 +198,7 @@ def get_pressure_avg():
         return None
     return float(pre["av"])
 
+
 def get_pressure_min():
     """
     Return the min pressure for the given day
@@ -205,6 +208,7 @@ def get_pressure_min():
     if not pre or "mn" not in pre:
         return None
     return float(pre["mn"])
+
 
 def get_pressure_max():
     """
@@ -236,5 +240,3 @@ if __name__ == "__main__":
     print(get_wind_avg())
     print(get_wind_max())
     print(get_wind_min())
-
-
