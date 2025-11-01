@@ -1,6 +1,7 @@
 import nasa_apod  # For getNASA_APIKey():
 import requests
 
+base_url = "https://api.nasa.gov/insight_weather/"
 
 def get_sols():
     """
@@ -34,8 +35,9 @@ def get_latest_sol():
     Using the get_sols() function to return the max int of the sols.
     Essentially returning the most recent sol day according to the API.
     """
-    sols = get_sols()
-    return max(sols)
+    if not get_sols():
+        return None
+    return max(get_sols(), key=int)
 
 
 def get_temp_avg():
@@ -104,6 +106,31 @@ def get_wind_avg():
             return None
 
         return float(hws["av"])
+    except Exception:
+        return None
+    
+def _fetch_insight():
+    resp = requests.get(
+        base_url,
+        params={"api_key": nasa_apod.getNASA_APIKey(), "feedtype": "json", "ver": "1.0"},
+        timeout=10,
+    )
+    resp.raise_for_status()
+    return resp.json()
+
+def get_pressure_avg():
+    try:
+        data = _fetch_insight()
+        sols = data.get("sol_keys", [])
+        if not sols:
+            return None
+        latest = get_latest_sol()
+        if not latest:
+            return None
+        pre = data.get(latest, {}).get("PRE")
+        if not pre or "av" not in pre:
+            return None
+        return float(pre["av"])
     except Exception:
         return None
 
