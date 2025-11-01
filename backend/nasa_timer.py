@@ -17,15 +17,18 @@ def get_countdown(target_name: str, target_datetime_str: str) -> CountdownResult
     """
     try:
         # convert the target string to a datetime object
+        current_time = datetime.datetime.now(datetime.timezone.utc)
+
         target_time = datetime.datetime.fromisoformat(target_datetime_str)
         
-        current_time = datetime.datetime.now()
+        if target_time.tzinfo is None or target_time.tzinfo.utcoffset(target_time) is None:
+            target_time = target_time.replace(tzinfo=datetime.timezone.utc)
 
         time_difference = target_time - current_time
         total_seconds = int(time_difference.total_seconds())
 
         if total_seconds < 0:
-           return CountdownResult(target_name, target_datetime_str, 0, 0, 0, 0)
+            return CountdownResult(target_name, target_datetime_str, 0, 0, 0, 0)
         
         days = total_seconds // (24 * 3600)
         seconds_remaining = total_seconds % (24 * 3600)

@@ -1,7 +1,9 @@
 import datetime
-from unittest.mock import MagicMock
+#from unittest.mock import MagicMock
 import pytest
-from backend import nasa_timer # Assuming 'backend' is on the path, or adjust the import
+from backend import (
+    nasa_timer,
+)
 
 FIXED_NOW = datetime.datetime(2024, 1, 1, 12, 0, 0)
 
@@ -9,11 +11,13 @@ FIXED_NOW = datetime.datetime(2024, 1, 1, 12, 0, 0)
 def mock_datetime_now(monkeypatch):
     """Fixture to mock datetime.datetime.now() to return a fixed time."""
     class MockDatetime(datetime.datetime):
+        # Override the classmethod 'now'
         @classmethod
-        def now(cls):
-            return FIXED_NOW
+        def now(cls, tz=None):
+            
+            return FIXED_NOW.replace(tzinfo=tz) if tz else FIXED_NOW.replace(tzinfo=datetime.timezone.utc)
     
-    monkeypatch.setattr(datetime, 'datetime', MockDatetime)
+    monkeypatch.setattr('backend.nasa_timer.datetime.datetime', MockDatetime)
 
 
 # --- Test Cases ---
