@@ -30,6 +30,11 @@ def getCurrDate():
     https://docs.python.org/3/library/datetime.html#format-codes
     """
     return datetime.date.today().strftime("%Y-%m-%d")
+def today_date():
+    """
+    Return today's date as a datetime.date object
+    """
+    return datetime.date.today().strftime("%Y-%m-%d")
 
 
 @dataclass
@@ -85,6 +90,16 @@ def get_APOD() -> APOD_Item:
         copyright=data.get("copyright"),
         raw_url=data.get("url"),
     )
+def get_APOD_for_date(date_str: str) -> APOD_Item:
+    """
+    Fetch APOD for a specific date ('YYYY-MM-DD').
+    Returns empty item on any failure/invalid date.
+    """
+    try:
+        datetime.datetime.strptime(date_str, "%Y-%m-%d")
+    except ValueError:
+        return APOD_Item.empty()
+    # @todo: finish this function
 
 
 def get_APOD_lookback(max_lookback_days=30) -> APOD_Item:
@@ -141,3 +156,11 @@ def get_APOD_lookback(max_lookback_days=30) -> APOD_Item:
     # No data thus return empty object
     # print("Could not fetch any APOD data.")
     return APOD_Item("", "", "", "", "", "", "", "")
+
+# local test
+if __name__ == "__main__":
+    apod = get_APOD()
+    print(f"Today: {apod.date} | {apod.title} | media={apod.media_type}")
+    # specific date
+    y2k = get_APOD_for_date("2000-01-01")
+    print(f"Y2K:{y2k.date} | {y2k.title}")
