@@ -10,6 +10,7 @@ if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 from backend.llspacedevs import AstronautData
 
+
 # Small helper mock response class
 class MockResponse:
     def __init__(self, json_data=None, status_code=200, raise_exc=None):
@@ -26,6 +27,7 @@ class MockResponse:
         if 400 <= self.status_code < 600 and not self._raise_exc:
             raise requests.HTTPError(f"HTTP {self.status_code}")
 
+
 # 1) Cache reading — should not call requests.get
 def test_get_astronauts_reads_cache_and_skips_network(tmp_path, monkeypatch):
     cache = tmp_path / "astronauts.json"
@@ -33,9 +35,11 @@ def test_get_astronauts_reads_cache_and_skips_network(tmp_path, monkeypatch):
     cache.write_text(json.dumps(data))
 
     called = {"get": False}
+
     def fake_get(*args, **kwargs):
         called["get"] = True
         return MockResponse([], 200)
+
     monkeypatch.setattr("requests.get", fake_get)
 
     ad = AstronautData(cache_file=str(cache))
@@ -43,12 +47,15 @@ def test_get_astronauts_reads_cache_and_skips_network(tmp_path, monkeypatch):
     assert result == data
     assert called["get"] is False
 
+
 # 2) Pagination and cache write
 def test_fetch_pagination_and_writes_cache(tmp_path, monkeypatch):
     page1 = {"results": [{"name": "A", "nationality": "X"}], "next": "url2"}
     page2 = {"results": [{"name": "B", "nationality": "Y"}], "next": None}
     responses = {
-        "https://lldev.thespacedevs.com/2.2.0/astronaut/?limit=100": MockResponse(page1, 200),
+        "https://lldev.thespacedevs.com/2.2.0/astronaut/?limit=100": MockResponse(
+            page1, 200
+        ),
         "url2": MockResponse(page2, 200),
     }
 
@@ -66,15 +73,18 @@ def test_fetch_pagination_and_writes_cache(tmp_path, monkeypatch):
     cached = json.loads(cache.read_text())
     assert cached == result
 
+
 # 3) Rate-limit (429) raises
 def test_fetch_raises_on_rate_limit(monkeypatch, tmp_path):
     def fake_get(url, *args, **kwargs):
         return MockResponse({}, status_code=429)
+
     monkeypatch.setattr("requests.get", fake_get)
     ad = AstronautData(cache_file=str(tmp_path / "astronauts.json"))
     with pytest.raises(Exception) as exc:
         ad._fetch_astronauts()
     assert "Rate limit" in str(exc.value)
+
 
 # 4) Filtering and top country aggregation
 def test_filtering_and_top_countries(tmp_path):
