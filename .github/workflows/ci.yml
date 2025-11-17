@@ -28,4 +28,4 @@ jobs:
         run: python -m black --check backend
 
       - name: Pytest
-        run: python -m pytest -q backend/tests
+        run: python -m pytest -q tests
