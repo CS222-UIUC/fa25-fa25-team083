@@ -15,28 +15,32 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [theme, setTheme] = useState<Theme>("light");
-  const [isInitialized, setIsInitialized] = useState(false);
+  // Synchronously read saved theme so the initial render matches the DOM
+  const getInitialTheme = (): Theme => {
+    try {
+      if (typeof window === "undefined") return "dark";
+      const saved = localStorage.getItem("theme") as Theme | null;
+      return saved ?? "dark";
+    } catch {
+      return "dark";
+    }
+  };
 
+  const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
+
+  // Keep localStorage and <html> class in sync whenever theme changes
   useEffect(() => {
-    // This code will only run on the client side
-    const savedTheme = localStorage.getItem("theme") as Theme | null;
-    const initialTheme = savedTheme || "light"; // Default to light theme
-
-    setTheme(initialTheme);
-    setIsInitialized(true);
-  }, []);
-
-  useEffect(() => {
-    if (isInitialized) {
+    try {
       localStorage.setItem("theme", theme);
       if (theme === "dark") {
         document.documentElement.classList.add("dark");
       } else {
         document.documentElement.classList.remove("dark");
       }
+    } catch {
+      // ignore storage errors
     }
-  }, [theme, isInitialized]);
+  }, [theme]);
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));

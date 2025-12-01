@@ -4,6 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Ensure consistent theme before React mounts to avoid flash.
+      // Force dark by default unless the user explicitly set 'light' in localStorage.
+      (function () {
+        try {
+          var saved = localStorage.getItem("theme");
+          // If user explicitly chose 'light', respect it. Otherwise force dark.
+          if (saved === "light") {
+            document.documentElement.classList.remove("dark");
+          } else {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {
+          // ignore - if storage is unavailable, still force dark
+          try { document.documentElement.classList.add("dark"); } catch(e){}
+        }
+      })();
+    </script>
   </head>
   <body class="dark:bg-gray-900">
     <div id="root"></div>
