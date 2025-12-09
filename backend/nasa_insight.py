@@ -91,7 +91,13 @@ def get_latest_sol():
     Essentially returning the most recent sol day according to the API.
     """
     sols = get_sols()
-    return max(sols)
+    if not sols:
+        return None
+    try:
+        # return the sol key as a string (sol keys are strings in the API)
+        return max(sols, key=lambda s: int(s))
+    except Exception:
+        return max(sols)
 
 
 def get_temp_avg():
@@ -102,6 +108,8 @@ def get_temp_avg():
     """
     data = get_insight_data()
     latest = get_latest_sol()
+    if latest is None:
+        return None
 
     ls = data.get(str(latest), {})  # The keys in the json file are strings
     at = ls.get("AT")
@@ -118,6 +126,8 @@ def get_temp_min():
     """
     data = get_insight_data()
     latest = get_latest_sol()
+    if latest is None:
+        return None
 
     ls = data.get(str(latest), {})  # The keys in the json file are strings
     at = ls.get("AT")
@@ -134,6 +144,8 @@ def get_temp_max():
     """
     data = get_insight_data()
     latest = get_latest_sol()
+    if latest is None:
+        return None
 
     ls = data.get(str(latest), {})  # The keys in the json file are strings
     at = ls.get("AT")
@@ -150,6 +162,8 @@ def get_wind_avg():
     """
     data = get_insight_data()
     latest = get_latest_sol()
+    if latest is None:
+        return None
 
     ls = data.get(str(latest), {})  # The keys in the json file are strings
     hws = ls.get("HWS")
@@ -165,6 +179,8 @@ def get_wind_min():
     """
     data = get_insight_data()
     latest = get_latest_sol()
+    if latest is None:
+        return None
 
     ls = data.get(str(latest), {})  # The keys in the json file are strings
     hws = ls.get("HWS")
@@ -180,6 +196,8 @@ def get_wind_max():
     """
     data = get_insight_data()
     latest = get_latest_sol()
+    if latest is None:
+        return None
 
     ls = data.get(str(latest), {})  # The keys in the json file are strings
     hws = ls.get("HWS")
@@ -190,9 +208,14 @@ def get_wind_max():
 
 def get_pressure_avg():
     """
-    Return the average pressure in Pascals (Pa) for the given day
+    Return the average pressure in Pascals (Pa) for the latest sol
     """
-    ls = get_insight_data()
+    data = get_insight_data()
+    latest = get_latest_sol()
+    if latest is None:
+        return None
+
+    ls = data.get(str(latest), {})
     pre = ls.get("PRE")
     if not pre or "av" not in pre:
         return None
@@ -201,9 +224,14 @@ def get_pressure_avg():
 
 def get_pressure_min():
     """
-    Return the min pressure for the given day
+    Return the min pressure for the latest sol
     """
-    ls = get_insight_data()
+    data = get_insight_data()
+    latest = get_latest_sol()
+    if latest is None:
+        return None
+
+    ls = data.get(str(latest), {})
     pre = ls.get("PRE")
     if not pre or "mn" not in pre:
         return None
@@ -212,13 +240,67 @@ def get_pressure_min():
 
 def get_pressure_max():
     """
-    Return the max pressure for the given day
+    Return the max pressure for the latest sol
     """
-    ls = get_insight_data()
+    data = get_insight_data()
+    latest = get_latest_sol()
+    if latest is None:
+        return None
+
+    ls = data.get(str(latest), {})
     pre = ls.get("PRE")
     if not pre or "mx" not in pre:
         return None
     return float(pre["mx"])
+
+
+# --- history helpers ---
+
+def _sol_metrics_for(sol: str):
+    """Compact metrics for a single sol:
+      { sol, temp: {avg,min,max}, wind: {avg,min,max}, pressure: {avg,min,max} }
+    Numeric values are floats or None.
+    """
+    data = get_insight_data()
+    ls = data.get(str(sol), {}) if data else {}
+
+    def _get(d, k):
+        if not d or k not in d:
+            return None
+        try:
+            return float(d[k])
+        except Exception:
+            return None
+
+    at = ls.get("AT") or {}
+    hws = ls.get("HWS") or {}
+    pre = ls.get("PRE") or {}
+
+    return {
+        "sol": str(sol),
+        "temp": {"avg": _get(at, "av"), "min": _get(at, "mn"), "max": _get(at, "mx")},
+        "wind": {"avg": _get(hws, "av"), "min": _get(hws, "mn"), "max": _get(hws, "mx")},
+        "pressure": {"avg": _get(pre, "av"), "min": _get(pre, "mn"), "max": _get(pre, "mx")},
+    }
+
+
+def get_last_n_sols(n: int = 7):
+    """Return up to the last `n` sols (oldest -> newest) with compact metrics."""
+    data = get_insight_data()
+    if not data:
+        return []
+
+    sols = list(data.get("sol_keys", []))
+    if not sols:
+        return []
+
+    try:
+        sols_sorted = sorted(sols, key=lambda s: int(s))
+    except Exception:
+        sols_sorted = sols
+
+    last = sols_sorted[-n:]
+    return [_sol_metrics_for(s) for s in last]
 
 
 if __name__ == "__main__":
