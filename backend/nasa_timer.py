@@ -101,7 +101,9 @@ def fetch_next_launch() -> tuple[str, str] | None:
         if not results:
             return None
         item = results[0]
-        name = item.get("name") or item.get("mission", {}).get("name") or "Upcoming Launch"
+        name = (
+            item.get("name") or item.get("mission", {}).get("name") or "Upcoming Launch"
+        )
         net = item.get("net")
         if not net:
             return None

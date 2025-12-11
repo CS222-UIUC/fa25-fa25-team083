@@ -256,6 +256,7 @@ def get_pressure_max():
 
 # --- history helpers ---
 
+
 def _sol_metrics_for(sol: str):
     """Compact metrics for a single sol:
       { sol, temp: {avg,min,max}, wind: {avg,min,max}, pressure: {avg,min,max} }
@@ -279,8 +280,16 @@ def _sol_metrics_for(sol: str):
     return {
         "sol": str(sol),
         "temp": {"avg": _get(at, "av"), "min": _get(at, "mn"), "max": _get(at, "mx")},
-        "wind": {"avg": _get(hws, "av"), "min": _get(hws, "mn"), "max": _get(hws, "mx")},
-        "pressure": {"avg": _get(pre, "av"), "min": _get(pre, "mn"), "max": _get(pre, "mx")},
+        "wind": {
+            "avg": _get(hws, "av"),
+            "min": _get(hws, "mn"),
+            "max": _get(hws, "mx"),
+        },
+        "pressure": {
+            "avg": _get(pre, "av"),
+            "min": _get(pre, "mn"),
+            "max": _get(pre, "mx"),
+        },
     }
 
 

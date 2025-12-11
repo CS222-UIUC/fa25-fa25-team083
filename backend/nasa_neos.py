@@ -3,9 +3,9 @@
 Provides functions to call the NEO feed, lookup and browse endpoints and
 produce a compact summary useful for the dashboard.
 """
+
 from __future__ import annotations
 
-import datetime
 from typing import Any, Dict, Optional
 
 import requests
@@ -56,7 +56,9 @@ def summarize_feed(feed_json: Dict[str, Any]) -> Dict[str, Any]:
             # estimated diameter (meters)
             try:
                 diam = (
-                    obj.get("estimated_diameter", {}).get("meters", {}).get("estimated_diameter_max")
+                    obj.get("estimated_diameter", {})
+                    .get("meters", {})
+                    .get("estimated_diameter_max")
                 )
                 diam = float(diam) if diam is not None else None
             except Exception:
@@ -78,7 +80,9 @@ def summarize_feed(feed_json: Dict[str, Any]) -> Dict[str, Any]:
                 except Exception:
                     miss_km = None
                 try:
-                    vel_kms = float(first.get("relative_velocity", {}).get("kilometers_per_second"))
+                    vel_kms = float(
+                        first.get("relative_velocity", {}).get("kilometers_per_second")
+                    )
                 except Exception:
                     vel_kms = None
                 close_date = first.get("close_approach_date")
@@ -95,7 +99,9 @@ def summarize_feed(feed_json: Dict[str, Any]) -> Dict[str, Any]:
 
             if miss_km is not None:
                 # track single closest
-                if closest is None or miss_km < (closest.get("miss_distance_km") or float("inf")):
+                if closest is None or miss_km < (
+                    closest.get("miss_distance_km") or float("inf")
+                ):
                     closest = {
                         "id": nid,
                         "name": name,

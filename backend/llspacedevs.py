@@ -113,8 +113,12 @@ class AstronautData:
         result = []
         for country, count in top_countries:
             people = nationality_astronauts.get(country, [])
-            active = [p["name"] for p in people if (p.get("status") or "").lower() == "active"]
-            inactive = [p["name"] for p in people if (p.get("status") or "").lower() != "active"]
+            active = [
+                p["name"] for p in people if (p.get("status") or "").lower() == "active"
+            ]
+            inactive = [
+                p["name"] for p in people if (p.get("status") or "").lower() != "active"
+            ]
             result.append((country, count, {"active": active, "inactive": inactive}))
         return result
 

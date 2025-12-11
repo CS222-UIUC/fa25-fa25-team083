@@ -82,9 +82,7 @@ def get_llspacedevs_api():
         ad = llspacedevs.AstronautData()
         top = ad.get_top_countries(10)
         # convert (country, count, [names]) tuples into serializable dicts
-        result = [
-            {"country": t[0], "count": t[1], "names": t[2]} for t in top
-        ]
+        result = [{"country": t[0], "count": t[1], "names": t[2]} for t in top]
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
