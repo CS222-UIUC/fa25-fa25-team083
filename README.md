@@ -43,5 +43,16 @@ And, paste into the local host into your browser of choice:
 http://localhost:5173/
 ```
 
+To shut it down:
+```bash
+CTRL + C
+```
+and
+
+```bash
+docker compose down
+```
+
+
 
 
