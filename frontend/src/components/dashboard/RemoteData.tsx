@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ComponentCard from "../common/ComponentCard";
 import useDashboardData from "../../hooks/useDashboardData";
 
@@ -162,9 +162,11 @@ export default function RemoteData() {
 
   return (
     <div className="space-y-4">
+      {/* chevron rotation styles for collapsible country lists */}
+      <style>{`details summary .chev { display:inline-block; transition: transform .15s ease; } details[open] summary .chev { transform: rotate(90deg); }`}</style>
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-          Live NASA & External Endpoints
+          Space Hub - Live NASA & External Endpoints
         </h3>
         <div className="flex items-center gap-2">
           <button
@@ -227,8 +229,29 @@ export default function RemoteData() {
         <ComponentCard title="NASA APOD">
           {data.apod ? (
             <div>
+              {/* Show image or embed video when available. If APOD returns a YouTube link we convert it to an embed URL so it plays inline. */}
               {data.apod.media_type === "image" && (
                 <img src={data.apod.url} alt={data.apod.title} className="w-full rounded mb-2" />
+              )}
+
+              {data.apod.media_type === "video" && (
+                (() => {
+                  const url: string = data.apod.url || "";
+                  const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/i);
+                  const embedUrl = ytMatch ? `https://www.youtube.com/embed/${ytMatch[1]}` : url;
+                  return (
+                    <div className="mb-2" style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+                      <iframe
+                        title={data.apod.title || "APOD video"}
+                        src={embedUrl}
+                        frameBorder={0}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+                      />
+                    </div>
+                  );
+                })()
               )}
               <div className="font-medium">{data.apod.title}</div>
               <p className="mt-2 text-sm text-gray-500 line-clamp-4">{data.apod.explanation}</p>
@@ -337,6 +360,10 @@ export default function RemoteData() {
       <ComponentCard title="LLSpaceDevs - Top Countries">
         {data.llspacedevs ? (
           <div className="text-sm">
+            <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+              <div className="font-medium">Country</div>
+              <div className="text-right">Astronauts</div>
+            </div>
             <ul className="space-y-2">
               {Array.isArray(data.llspacedevs) && data.llspacedevs.length > 0 ? (
                 data.llspacedevs.slice(0, 6).map((c: any, i: number) => (
@@ -354,10 +381,43 @@ export default function RemoteData() {
               <div className="mt-2">
                 {Array.isArray(data.llspacedevs) && data.llspacedevs.length > 0 ? (
                   data.llspacedevs.slice(0, 6).map((c: any, i: number) => (
-                    <div key={i} className="mb-2">
-                      <div className="text-xs font-semibold">{c.country} ({c.count})</div>
-                      <div className="text-xs text-gray-600">{(c.names || []).slice(0,5).join(', ')}</div>
-                    </div>
+                    <details key={i} className="mb-2" data-country={c.country}>
+                      <summary className="cursor-pointer text-xs font-semibold flex items-center justify-between">
+                        <span>{c.country} <span className="text-gray-500">({c.count})</span></span>
+                        <div className="flex items-center gap-2">
+                          {/* counters when names is object */}
+                          {c.names && !Array.isArray(c.names) ? (
+                            <span className="text-xs text-gray-500">
+                              Active ({(c.names.active || []).length}) · Inactive ({(c.names.inactive || []).length})
+                            </span>
+                          ) : null}
+                          <span className="chev text-gray-400">▸</span>
+                        </div>
+                      </summary>
+
+                      <div className="mt-2 text-xs text-gray-600">
+                        {Array.isArray(c.names) ? (
+                          // legacy shape: array of names
+                          <div>{(c.names || []).join(", ")}</div>
+                        ) : (
+                          <div className="space-y-1">
+                            {c.names?.active && c.names.active.length > 0 ? (
+                              <div>
+                                <div className="font-semibold">Active ({c.names.active.length}):</div>
+                                <div className="text-xs text-gray-700">{c.names.active.join(', ')}</div>
+                              </div>
+                            ) : null}
+
+                            {c.names?.inactive && c.names.inactive.length > 0 ? (
+                              <div className="mt-1">
+                                <div className="font-semibold text-gray-500">Inactive ({c.names.inactive.length}):</div>
+                                <div className="text-xs text-gray-500">{c.names.inactive.join(', ')}</div>
+                              </div>
+                            ) : null}
+                          </div>
+                        )}
+                      </div>
+                    </details>
                   ))
                 ) : null}
               </div>

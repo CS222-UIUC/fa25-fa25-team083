@@ -45,6 +45,8 @@ def summarize_feed(feed_json: Dict[str, Any]) -> Dict[str, Any]:
 
     # collect candidate close approaches so we can return a top-N list
     close_approaches: list[Dict[str, Any]] = []
+    # flattened list of all NEOs for the requested date range
+    all_neos: list[Dict[str, Any]] = []
 
     for date_str, items in neos.items():
         for obj in items:
@@ -66,19 +68,30 @@ def summarize_feed(feed_json: Dict[str, Any]) -> Dict[str, Any]:
 
             # close approach data - use first entry if present
             cad = obj.get("close_approach_data") or []
-            if not cad:
-                continue
-            first = cad[0]
+            first = cad[0] if cad else None
             miss_km = None
             vel_kms = None
-            try:
-                miss_km = float(first.get("miss_distance", {}).get("kilometers"))
-            except Exception:
-                miss_km = None
-            try:
-                vel_kms = float(first.get("relative_velocity", {}).get("kilometers_per_second"))
-            except Exception:
-                vel_kms = None
+            close_date = None
+            if first:
+                try:
+                    miss_km = float(first.get("miss_distance", {}).get("kilometers"))
+                except Exception:
+                    miss_km = None
+                try:
+                    vel_kms = float(first.get("relative_velocity", {}).get("kilometers_per_second"))
+                except Exception:
+                    vel_kms = None
+                close_date = first.get("close_approach_date")
+
+            # build a flattened record for this object (include miss/vel if present)
+            record = {
+                "id": nid,
+                "name": name,
+                "close_date": close_date,
+                "miss_distance_km": miss_km,
+                "velocity_km_s": vel_kms,
+            }
+            all_neos.append(record)
 
             if miss_km is not None:
                 # track single closest
@@ -88,7 +101,7 @@ def summarize_feed(feed_json: Dict[str, Any]) -> Dict[str, Any]:
                         "name": name,
                         "miss_distance_km": miss_km,
                         "velocity_km_s": vel_kms,
-                        "close_date": first.get("close_approach_date"),
+                        "close_date": close_date,
                     }
 
                 # also append to list for top-N selection
@@ -98,7 +111,7 @@ def summarize_feed(feed_json: Dict[str, Any]) -> Dict[str, Any]:
                         "name": name,
                         "miss_distance_km": miss_km,
                         "velocity_km_s": vel_kms,
-                        "close_date": first.get("close_approach_date"),
+                        "close_date": close_date,
                     }
                 )
 
@@ -117,6 +130,7 @@ def summarize_feed(feed_json: Dict[str, Any]) -> Dict[str, Any]:
         "closest": closest or {},
         "largest": largest or {},
         "closest_list": closest_list,
+        "all_neos": all_neos,
     }
 
 

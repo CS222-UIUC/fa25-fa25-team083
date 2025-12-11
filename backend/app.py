@@ -19,9 +19,20 @@ def health():
 
 @app.get("/api/countdown")
 def get_countdown_api():
-    # Example target date (replace this with a real API call later)!!
-    target_dt_str = "2025-12-31T23:59:59"
+    # Try to fetch the next real launch from an external launch API. If that fails,
+    # fall back to the existing placeholder target.
+    try:
+        launch = nasa_timer.fetch_next_launch()
+        if launch:
+            name, net = launch
+            countdown_data = nasa_timer.get_countdown(name, net)
+            return jsonify(countdown_data.__dict__)
+    except Exception:
+        # continue to fallback
+        pass
 
+    # Fallback placeholder (kept for resilience if the external API is unavailable)
+    target_dt_str = "2025-12-31T23:59:59"
     countdown_data = nasa_timer.get_countdown("New Year's Eve Test", target_dt_str)
     return jsonify(countdown_data.__dict__)
 

@@ -20,30 +20,31 @@ const navItems: NavItem[] = [
     name: "Dashboard",
     path: "/",
   },
+  // API links (match homepage cards top-to-bottom)
   {
     icon: <PlugInIcon />,
-    name: "App (root)",
-    path: "/api/app",
-  },
-  {
-    icon: <PlugInIcon />,
-    name: "LLSpaceDevs",
-    path: "/api/llspacedevs",
+    name: "Timer / Launch Info",
+    path: "/timer",
   },
   {
     icon: <PlugInIcon />,
     name: "NASA APOD",
-    path: "/api/nasa-apod",
+    path: "/apod",
   },
   {
     icon: <PlugInIcon />,
-    name: "NASA InSight",
-    path: "/api/nasa-insight",
+    name: "Mars-Insight",
+    path: "/mars-insight",
   },
   {
     icon: <PlugInIcon />,
-    name: "NASA Timer",
-    path: "/api/nasa-timer",
+    name: "NEOs",
+    path: "/neos",
+  },
+  {
+    icon: <PlugInIcon />,
+    name: "Astronaut Feed",
+    path: "/astronauts",
   },
 ];
 

@@ -10,8 +10,8 @@ const PageMeta = ({
   description: string;
 }) => (
   <Helmet>
-    {/* Always show "Space Hub" in the browser tab */}
-    <title>Space Hub</title>
+    {/* Show page title followed by app name */}
+    <title>{title ? `${title} - ${APP_NAME}` : APP_NAME}</title>
     <meta name="description" content={description} />
   </Helmet>
 );

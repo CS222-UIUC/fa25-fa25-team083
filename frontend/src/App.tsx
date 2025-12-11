@@ -18,6 +18,11 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import TimerPage from "./pages/Timer/TimerPage";
+import ApodPage from "./pages/Apod/ApodPage";
+import MarsInsightPage from "./pages/MarsInsight/MarsInsightPage";
+import NeosPage from "./pages/Neos/NeosPage";
+import AstronautsPage from "./pages/Astronauts/AstronautsPage";
 
 export default function App() {
   return (
@@ -36,6 +41,13 @@ export default function App() {
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
+
+            {/* Timer / Launch Info page */}
+            <Route path="/timer" element={<TimerPage />} />
+            <Route path="/apod" element={<ApodPage />} />
+            <Route path="/mars-insight" element={<MarsInsightPage />} />
+            <Route path="/neos" element={<NeosPage />} />
+            <Route path="/astronauts" element={<AstronautsPage />} />
 
             {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />
