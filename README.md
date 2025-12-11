@@ -28,7 +28,7 @@ Before running the project, ensure you have:
 
 Clone the repository:
 ```bash
-git clone [https://github.com/CS222-FA25/fa25-fa25-team083.git](https://github.com/CS222-UIUC/fa25-fa25-team083.git)
+git clone https://github.com/CS222-FA25/fa25-fa25-team083.git
 cd fa25-fa25-team083
 ```
 
