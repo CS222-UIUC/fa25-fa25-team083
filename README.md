@@ -1,60 +1,46 @@
-Our team's project board: https://github.com/orgs/CS222-UIUC/projects/46/views/1
+# Space Hub
+## FA25 CS222 Team 083
 
 
-The development branch has been set-up. There are two ways from what I gathered you can code. 
 
-## 1) Using GitHub's Codespace
-You go to: branches -> develop -> Code -> Codespaces
+Space Hub is a full stack web application that aims to aggregate NASA data into a single, unified dashboard.  
+It provides users with access to various resources and APIs: Astronomy Picture of the Day (APOD), Mars InSight weather data, Near-Earth Objects, and upcoming NASA events.  
+The project consists of a React (Vite) frontend, a Flask backend, and a Dockerized deployment environment.
 
-## 2) Local Machine (Windows)
-I was only able to set this up using my Windows laptop. Sorry if you are using Linux or Mac
-##This is assuming you have Docker Desktop running, Git, and VS Code with the Dev Containers extension
 
-Make a folder somewhere on your machine and remember the path to your folder.
+## Features
+- APOD viewer with image and the description
+- Mars InSight data
+- Near Earth Object information
+- Countdown timers for launches and events
+- A responsive dashboard UI built with React and Tailwind
+- REST API backend with caching
 
-Open a new window of VS Code and open a terminal window (Terminal -> New Terminal) or (Ctrl + Shift + `)
-```powershell
-cd "Path to your project folder on your machine"
 
-git clone https://github.com/CS222-UIUC/fa25-fa25-team083.git
+
+##  Requirements
+Before running the project, ensure you have:
+
+- Docker Desktop (for Windows/macOS) or Docker Engine (for Linux)
+- Git
+
+##  Running the Project With Docker
+
+Clone the repository:
+```bash
+git clone https://github.com/CS222-FA25/fa25-fa25-team083.git
 cd fa25-fa25-team083
-
-git checkout develop
-
-Copy-Item .env.example .env
-
-docker compose up -d
-
-docker compose ps
-Invoke-WebRequest -UseBasicParsing http://localhost:8001/health | Select-Object -ExpandProperty Content
-
-code .
 ```
 
-### And you should now be able to work in the develop branch. We can go and do seperate branches or all work in develop. If you need help setting this up then let me know (Kayetan J.). I tried my best at running this so it can work on everyone's machine so hopefully this works.
-
-If you want to develop in your own branch, such as a feature, then I'm assuming you can do this.
-
-```powershell
-git checkout develop
-git pull --ff-only
-git checkout -b feat/"PUT YOUR FEATURE NAME WITHOUT THE QUOTES"
+Now, from the repository root:
+```bash
+docker compose up --build
 ```
 
-Now you can add a new file python file or do whatever prior commiting and pushing.
-Assuming you are doing a backend file like I did here:
-
-```powershell
-git add backend\hello.py
-git commit -m "feat: add hello world script" #<--- This stays in quotes
-git push -u origin feat/"PUT YOUR FEATURE NAME WITHOUT THE QUOTES LIKE BEFORE"
+And, paste into the local host into your browser of choice:
+```
+http://localhost:5173/
 ```
 
-And now you should be able to see a pull request at the top of the screen under: https://github.com/CS222-UIUC/fa25-fa25-team083/tree/develop
 
-
-
-
-
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/19BwrNgF)
 
