@@ -30,6 +30,7 @@ Clone the repository:
 ```bash
 git clone https://github.com/CS222-UIUC/fa25-fa25-team083.git
 cd fa25-fa25-team083
+copy .env.example .env
 ```
 
 Now, from the repository root:
