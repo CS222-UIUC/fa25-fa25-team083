@@ -1,5 +1,7 @@
 import { HelmetProvider, Helmet } from "react-helmet-async";
 
+const APP_NAME = "Space Hub";
+
 const PageMeta = ({
   title,
   description,
@@ -8,7 +10,8 @@ const PageMeta = ({
   description: string;
 }) => (
   <Helmet>
-    <title>{title}</title>
+    {/* Show page title followed by app name */}
+    <title>{title ? `${title} - ${APP_NAME}` : APP_NAME}</title>
     <meta name="description" content={description} />
   </Helmet>
 );

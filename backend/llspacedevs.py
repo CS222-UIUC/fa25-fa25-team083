@@ -91,26 +91,36 @@ class AstronautData:
         """
         astronauts = self.get_astronauts()
 
-        # Count astronauts by nationality
+        # Collect astronauts per nationality with status
         nationality_counts = Counter()
         nationality_astronauts = {}
 
         for astronaut in astronauts:
             nationality = astronaut.get("nationality")
+            status = (astronaut.get("status") or {}).get("name")
             if nationality:
                 nationality_counts[nationality] += 1
                 if nationality not in nationality_astronauts:
                     nationality_astronauts[nationality] = []
-                nationality_astronauts[nationality].append(astronaut["name"])
+                nationality_astronauts[nationality].append(
+                    {"name": astronaut.get("name"), "status": status}
+                )
 
         # Get top N countries
         top_countries = nationality_counts.most_common(top_n)
 
-        # Return with astronaut names
-        return [
-            (country, count, nationality_astronauts[country])
-            for country, count in top_countries
-        ]
+        # Return with astronaut names split into active/inactive lists
+        result = []
+        for country, count in top_countries:
+            people = nationality_astronauts.get(country, [])
+            active = [
+                p["name"] for p in people if (p.get("status") or "").lower() == "active"
+            ]
+            inactive = [
+                p["name"] for p in people if (p.get("status") or "").lower() != "active"
+            ]
+            result.append((country, count, {"active": active, "inactive": inactive}))
+        return result
 
     def get_astronaut_count_by_country(self):
         """

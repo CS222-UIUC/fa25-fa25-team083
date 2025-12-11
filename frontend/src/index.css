@@ -186,9 +186,43 @@ layer(base);
     cursor: pointer;
   }
   body {
-    @apply relative font-normal font-outfit z-1 bg-gray-50;
+    @apply relative font-normal font-outfit z-1 bg-gray-900 text-white;
   }
 }
+
+/*
+  Aggressive global dark overrides
+  - Forces common light utility classes to dark values so the UI stays dark even
+    when `.dark` is not present (quick fallback for browsers that don't apply
+    the saved theme early).
+  - Uses !important to beat Tailwind-generated utilities. This is intentional
+    for an immediate fix; consider a more surgical approach later.
+*/
+:root {
+  /* Ensure variables for dark fallback */
+  --global-bg-dark: var(--color-gray-900);
+  --global-border-dark: rgba(255,255,255,0.04);
+  --global-text-dark: rgba(255,255,255,0.95);
+}
+
+.bg-white { background-color: var(--global-bg-dark) !important; }
+.bg-gray-50 { background-color: var(--global-bg-dark) !important; }
+.bg-gray-100 { background-color: var(--color-gray-800) !important; }
+.bg-brand-50 { background-color: rgba(70,95,255,0.04) !important; }
+.text-gray-900, .text-gray-800 { color: var(--global-text-dark) !important; }
+.text-gray-700 { color: rgba(255,255,255,0.8) !important; }
+.border-gray-200, .border-gray-50 { border-color: var(--global-border-dark) !important; }
+.hover\:bg-gray-100:hover { background-color: rgba(255,255,255,0.02) !important; }
+.hover\:bg-gray-50:hover { background-color: rgba(255,255,255,0.02) !important; }
+.shadow-theme-xs, .shadow-theme-sm, .shadow-theme-md { box-shadow: none !important; }
+
+/* Specific overrides for third-party widgets often using bg-white */
+.flatpickr-calendar, .apexcharts-tooltip, .jvectormap-container, .stocks-slider-outer .swiper-button-next, .stocks-slider-outer .swiper-button-prev {
+  background-color: var(--global-bg-dark) !important;
+  border-color: var(--global-border-dark) !important;
+  color: var(--global-text-dark) !important;
+}
+
 
 @utility menu-item {
   @apply relative flex items-center w-full gap-3 px-3 py-2 font-medium rounded-lg text-theme-sm;

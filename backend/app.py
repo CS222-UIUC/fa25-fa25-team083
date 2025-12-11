@@ -1,9 +1,12 @@
 # backend/app.py
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import nasa_timer
 import nasa_apod
 import nasa_insight
+import llspacedevs
+import nasa_neos
+import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -16,9 +19,20 @@ def health():
 
 @app.get("/api/countdown")
 def get_countdown_api():
-    # Example target date (replace this with a real API call later)!!
-    target_dt_str = "2025-12-31T23:59:59"
+    # Try to fetch the next real launch from an external launch API. If that fails,
+    # fall back to the existing placeholder target.
+    try:
+        launch = nasa_timer.fetch_next_launch()
+        if launch:
+            name, net = launch
+            countdown_data = nasa_timer.get_countdown(name, net)
+            return jsonify(countdown_data.__dict__)
+    except Exception:
+        # continue to fallback
+        pass
 
+    # Fallback placeholder (kept for resilience if the external API is unavailable)
+    target_dt_str = "2025-12-31T23:59:59"
     countdown_data = nasa_timer.get_countdown("New Year's Eve Test", target_dt_str)
     return jsonify(countdown_data.__dict__)
 
@@ -32,7 +46,13 @@ def get_apod_api():
 @app.get("/api/mars-insight")
 def get_mars_insight_api():
     sol = nasa_insight.get_latest_sol()
-    return jsonify(  # check back later to make sure this is correctlty done
+    # include a compact 7-sol history for the frontend
+    try:
+        history = nasa_insight.get_last_n_sols(7)
+    except Exception:
+        history = []
+
+    return jsonify(  # check back later to make sure this is correctly done
         {
             "sol": sol,
             "temp": {
@@ -50,8 +70,77 @@ def get_mars_insight_api():
                 "min": nasa_insight.get_pressure_min(),
                 "max": nasa_insight.get_pressure_max(),
             },
+            "history": history,
         }
     )
+
+
+@app.get("/api/llspacedevs")
+def get_llspacedevs_api():
+    """Return a compact summary (top countries) from the LLSpaceDevs data."""
+    try:
+        ad = llspacedevs.AstronautData()
+        top = ad.get_top_countries(10)
+        # convert (country, count, [names]) tuples into serializable dicts
+        result = [{"country": t[0], "count": t[1], "names": t[2]} for t in top]
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.get("/api/neos")
+def get_neos_api():
+    """Query NASA NEO feed and return compact summary.
+
+    Query params:
+      - start (YYYY-MM-DD) optional (defaults to today)
+      - end   (YYYY-MM-DD) optional (defaults to start; max 7-day window)
+    """
+    try:
+        start = request.args.get("start")
+        end = request.args.get("end")
+
+        today = datetime.date.today()
+        if not start:
+            start_dt = today
+        else:
+            start_dt = datetime.date.fromisoformat(start)
+
+        if not end:
+            end_dt = start_dt
+        else:
+            end_dt = datetime.date.fromisoformat(end)
+
+        # enforce max 7-day window
+        if (end_dt - start_dt).days > 6:
+            end_dt = start_dt + datetime.timedelta(days=6)
+
+        feed = nasa_neos.fetch_feed(start_dt.isoformat(), end_dt.isoformat())
+        summary = nasa_neos.summarize_feed(feed)
+        return jsonify(summary)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.get("/api/neo/<string:neo_id>")
+def get_neo_lookup_api(neo_id: str):
+    """Return details for a specific NEO id."""
+    try:
+        data = nasa_neos.get_neo_lookup(neo_id)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.get("/api/neo/browse")
+def get_neo_browse_api():
+    """Browse NEO catalog. Optional `page` query param."""
+    try:
+        page = int(request.args.get("page", "0"))
+        data = nasa_neos.browse_neos(page=page)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
