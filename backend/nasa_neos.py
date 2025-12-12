@@ -157,6 +157,7 @@ def browse_neos(page: int = 0) -> Dict[str, Any]:
     resp.raise_for_status()
     return resp.json()
 
+
 def neo_stats():
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
