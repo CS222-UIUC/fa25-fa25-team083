@@ -11,6 +11,7 @@ import datetime
 app = Flask(__name__)
 CORS(app)
 
+
 @app.get("/health")
 def health():
     return jsonify(status="ok")
