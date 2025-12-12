@@ -88,6 +88,45 @@ def get_llspacedevs_api():
         return jsonify({"error": str(e)}), 500
 
 
+@app.get("/api/llspacedevs/search")
+def search_astronauts_api():
+    """
+    Search astronauts by country.
+    """
+    country = request.args.get("country")
+    if not country or not country.strip():
+        return jsonify({"error": "Missing 'country' query parameter"}), 400
+    try:
+        ad = llspacedevs.AstronautData()
+        astronauts = ad.get_astronauts_by_country(country)
+
+        # also return active/inactive breakdown like top_countries() does
+        all_data = ad.get_astronauts()
+        active = []
+        inactive = []
+
+        for a in all_data:
+            nat = a.get("nationality", "")
+            if nat and country.lower() in nat.lower():
+                status = (a.get("status") or {}).get("name", "")
+                if status.lower() == "active":
+                    active.append(a.get("name"))
+                else:
+                    inactive.append(a.get("name"))
+
+        return jsonify(
+            {
+                "country": country,
+                "count": len(astronauts),
+                "active": active,
+                "inactive": inactive,
+            }
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.get("/api/neos")
 def get_neos_api():
     """Query NASA NEO feed and return compact summary.
