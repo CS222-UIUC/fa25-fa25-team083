@@ -12,6 +12,8 @@ import requests
 
 import nasa_apod
 
+from flask import request, jsonify
+
 
 API_BASE = "https://api.nasa.gov/neo/rest/v1"
 
@@ -154,3 +156,17 @@ def browse_neos(page: int = 0) -> Dict[str, Any]:
     resp = requests.get(url, params=params, timeout=15)
     resp.raise_for_status()
     return resp.json()
+
+def neo_stats():
+    start_date = request.args.get("start_date")
+    end_date = request.args.get("end_date")
+
+    if not start_date or not end_date:
+        return jsonify({"error": "start_date and end_date are required"}), 400
+
+    try:
+        feed_json = fetch_feed(start_date, end_date)
+        summary = summarize_feed(feed_json)
+        return jsonify(summary)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
