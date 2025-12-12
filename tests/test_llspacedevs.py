@@ -106,3 +106,30 @@ def test_filtering_and_top_countries(tmp_path):
     # American/american counted separately because current code keys on raw nationality strings
     # validate counts reflect input
     assert any(country in ("American", "american") for country in counts)
+
+# 5) get_astronauts_by_country matches substrings (e.g., "american / Canadian")
+def test_get_astronauts_by_country_substring_match(tmp_path):
+    data = [
+        {"name": "Eve", "nationality": "american / Canadian"},
+        {"name": "Frank", "nationality": "Canadian"},
+    ]
+    cache = tmp_path / "astronauts.json"
+    cache.write_text(json.dumps(data))
+    ad = AstronautData(cache_file=str(cache))
+    res = ad.get_astronauts_by_country("American")
+    assert res == ["Eve"]  # substring + case-insensitive
+
+
+# 6) empty dataset produces empty structures without error
+def test_empty_dataset_behaviors(tmp_path):
+    cache = tmp_path / "astronauts.json"
+    cache.write_text(json.dumps([]))
+
+    ad = AstronautData(cache_file=str(cache))
+    assert ad.get_astronauts() == []
+    # by-country search on empty data -> empty list
+    assert ad.get_astronauts_by_country("american") == []
+    # top countries on empty data -> empty list
+    assert ad.get_top_countries(top_n=5) == []
+    # counts on empty data -> empty dict
+    assert ad.get_astronaut_count_by_country() == {}
