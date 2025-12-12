@@ -127,6 +127,31 @@ def search_astronauts_api():
         return jsonify({"error": str(e)}), 500
 
 
+@app.get("/api/llspacedevs/search-advanced")
+def search_astronauts_advanced_api():
+    """
+    Advanced search for astronauts by optional country and status
+    """
+    country = request.args.get("country")
+    status = request.args.get("status", "all")
+
+    try:
+        ad = llspacedevs.AstronautData()
+        results = ad.search_astronauts(country=country, status=status)
+        return jsonify(
+            {
+                "filters": {"country": country, "status": status},
+                "count": len(results),
+                "results": results,
+            }
+        )
+    except ValueError as ve:
+        # invalid status, etc
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.get("/api/neos")
 def get_neos_api():
     """Query NASA NEO feed and return compact summary.
