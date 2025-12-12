@@ -126,6 +126,7 @@ def search_astronauts_api():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.get("/api/llspacedevs/search-advanced")
 def search_astronauts_advanced_api():
     """
