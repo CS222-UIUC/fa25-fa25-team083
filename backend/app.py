@@ -87,6 +87,7 @@ def get_llspacedevs_api():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.get("/api/llspacedevs/search")
 def search_astronauts_api():
     """
@@ -113,15 +114,18 @@ def search_astronauts_api():
                 else:
                     inactive.append(a.get("name"))
 
-        return jsonify({
-            "country": country,
-            "count": len(astronauts),
-            "active": active,
-            "inactive": inactive,
-        })
+        return jsonify(
+            {
+                "country": country,
+                "count": len(astronauts),
+                "active": active,
+                "inactive": inactive,
+            }
+        )
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.get("/api/neos")
 def get_neos_api():
