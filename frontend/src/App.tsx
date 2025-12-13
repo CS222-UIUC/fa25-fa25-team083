@@ -23,6 +23,7 @@ import ApodPage from "./pages/Apod/ApodPage";
 import MarsInsightPage from "./pages/MarsInsight/MarsInsightPage";
 import NeosPage from "./pages/Neos/NeosPage";
 import AstronautsPage from "./pages/Astronauts/AstronautsPage";
+import MoonPhasePage from "./pages/MoonPhase/MoonPhasePage";
 
 export default function App() {
   return (
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="/mars-insight" element={<MarsInsightPage />} />
             <Route path="/neos" element={<NeosPage />} />
             <Route path="/astronauts" element={<AstronautsPage />} />
+            <Route path="/moon-phase" element={<MoonPhasePage />} />
 
             {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />

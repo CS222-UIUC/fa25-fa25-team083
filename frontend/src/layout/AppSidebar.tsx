@@ -46,6 +46,11 @@ const navItems: NavItem[] = [
     name: "Astronaut Feed",
     path: "/astronauts",
   },
+  {
+    icon: <PlugInIcon />,
+    name: "Moon Phase",
+    path: "/moon-phase",
+  },
 ];
 
 

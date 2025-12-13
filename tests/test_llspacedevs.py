@@ -107,6 +107,7 @@ def test_filtering_and_top_countries(tmp_path):
     # validate counts reflect input
     assert any(country in ("American", "american") for country in counts)
 
+
 # 5) get_astronauts_by_country matches substrings (e.g., "american / Canadian")
 def test_get_astronauts_by_country_substring_match(tmp_path):
     data = [

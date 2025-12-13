@@ -6,6 +6,7 @@ import nasa_apod
 import nasa_insight
 import llspacedevs
 import nasa_neos
+import moon_phase
 import datetime
 
 app = Flask(__name__)
@@ -202,6 +203,51 @@ def get_neo_browse_api():
     try:
         page = int(request.args.get("page", "0"))
         data = nasa_neos.browse_neos(page=page)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.get("/api/moon-phase")
+def get_moon_phase_api():
+    """Get current moon phase information."""
+    try:
+        lat = request.args.get("lat", type=float)
+        lon = request.args.get("lon", type=float)
+        data = moon_phase.get_current_moon_phase(lat, lon)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.get("/api/moon-phase/<string:date>")
+def get_moon_phase_date_api(date: str):
+    """Get moon phase for a specific date (YYYY-MM-DD)."""
+    try:
+        lat = request.args.get("lat", type=float)
+        lon = request.args.get("lon", type=float)
+        data = moon_phase.get_moon_phase_for_date(date, lat, lon)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.get("/api/moon-phase/range")
+def get_moon_phase_range_api():
+    """Get moon phase information for a date range.
+
+    Query params:
+      - start (YYYY-MM-DD) required
+      - days (int) optional, defaults to 7
+    """
+    try:
+        start_date = request.args.get("start")
+        days = int(request.args.get("days", "7"))
+
+        if not start_date:
+            return jsonify({"error": "start date is required"}), 400
+
+        data = moon_phase.get_moon_phase_range(start_date, days)
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
