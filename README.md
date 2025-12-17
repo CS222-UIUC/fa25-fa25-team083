@@ -2,21 +2,44 @@
 ## FA25 CS222 Team 083
 
 
-
+## Overview
 Space Hub is a full stack web application that aims to aggregate NASA data into a single, unified dashboard.  
 It provides users with access to various resources and APIs: Astronomy Picture of the Day (APOD), Mars InSight weather data, Near-Earth Objects, and upcoming NASA events.  
 The project consists of a React (Vite) frontend, a Flask backend, and a Dockerized deployment environment.
+Our motivation for this project was to simplify and ease the access of infromation from NASA and other Space related APIs.
+As such, users can find relevant, up-to-date space data and information all in one application.
 
+---
 
 ## Features
-- APOD viewer with image and the description
+- APOD viewer with image and description
 - Mars InSight data
 - Near Earth Object information
 - Countdown timers for launches and events
 - A responsive dashboard UI built with React and Tailwind
 - REST API backend with caching
 
+## Architecture
+### Frontend
+- Displays all of the data collectively to the user
+- Handles all UI interactions
+- React, Vite, Tailwind CSS
+- Makes HTTP requests to the backend Flask API
+  
+### Backend
+- Directly fetches data from NASA APIs
+- Processes the responses
+- Python, Flask
+- Passes data from external APIs to the frontend
 
+### APIs
+- NASA's APOD, Mars InSight, Near-Earth Objects, launch/event data, lunar
+
+### Deployment
+- Allows for the project/app to be reproducible across systems
+- Docker/Docker Compose runs frontend and backend together in isolated containers
+
+---
 
 ##  Requirements
 Before running the project, ensure you have:
@@ -51,6 +74,17 @@ and
 ```bash
 docker compose down
 ```
+
+
+---
+### Team Members
+
+Frontend
+- Kayetan Jarzabek
+- 
+Backend
+- Kayetan Jarzabek
+- 
 
 
 
