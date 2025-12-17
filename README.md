@@ -100,13 +100,17 @@ docker compose down
 
 Frontend Development
 - Kayetan Jarzabek
-- 
+- Abhinav Jain
 Backend Development
 - Kayetan Jarzabek
 - Ashrita Jakkam
+- Abhinav Jain
 
 Deployment
 - Kayetan Jarzabek
+
+CI/CD and PyTest
+-Abhinav Jain
 
 
 
