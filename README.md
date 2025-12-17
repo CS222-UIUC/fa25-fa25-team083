@@ -103,7 +103,7 @@ Frontend Development
 - 
 Backend Development
 - Kayetan Jarzabek
-- 
+- Ashrita Jakkam
 Deployment
 - Kayetan Jarzabek
 
