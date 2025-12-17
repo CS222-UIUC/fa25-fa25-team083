@@ -25,19 +25,25 @@
 - Handles all UI interactions
 - React, Vite, Tailwind CSS
 - Makes HTTP requests to the backend Flask API
+- Worked on by the Frontend Team
   
 ### Backend
 - Directly fetches data from NASA APIs
 - Processes the responses
 - Python, Flask
 - Passes data from external APIs to the frontend
+- Worked on by the Backend Team
 
 ### APIs
-- NASA's APOD, Mars InSight, Near-Earth Objects, launch/event data, lunar
+- Provide the real-time and up-to-date space and astronomy data
+- APIs Used: NASA's APOD, Mars InSight, Near-Earth Objects, launch/event data, lunar data
+- Queried and parsed by the backend
+- Worked on by the Backend Team
 
 ### Deployment
 - Allows for the project/app to be reproducible across systems
 - Docker/Docker Compose runs frontend and backend together in isolated containers
+- Worked on by the Deployment Team
 
 ---
 
@@ -88,14 +94,17 @@ docker compose down
 
 
 ---
-### Team Members
+### Team Members and Roles
 
-Frontend
+Frontend Development
 - Kayetan Jarzabek
 - 
-Backend
+Backend Development
 - Kayetan Jarzabek
 - 
+Deployment
+- Kayetan Jarzabek
+
 
 
 
