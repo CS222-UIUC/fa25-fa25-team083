@@ -9,6 +9,8 @@
 - Our motivation for this project was to simplify and ease the access of infromation from NASA and other Space related APIs.
 - As such, users can find relevant, up-to-date space data and information all in one application.
 
+![Example of Space Hub Dashboard](https://github.com/CS222-UIUC/fa25-fa25-team083/blob/main/dashboard.PNG)
+
 ---
 
 ## Features
