@@ -52,7 +52,7 @@ Before running the project, ensure you have:
 
 This application uses a demo NASA API key.
 Because the demo key is rate limited, users may encounter request limits during extended use.
-If you wish to avoid this, users are encouraged to register for a free NASA API key at: [https://api.nasa.gov/](url)
+If you wish to avoid this, users are encouraged to register for a free NASA API key at: [https://api.nasa.gov/](https://api.nasa.gov/)
 
 #### You must then access the /.env file and change the NASA_API_KEY to your key.
 
