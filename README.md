@@ -3,11 +3,11 @@
 
 
 ## Overview
-Space Hub is a full stack web application that aims to aggregate NASA data into a single, unified dashboard.  
-It provides users with access to various resources and APIs: Astronomy Picture of the Day (APOD), Mars InSight weather data, Near-Earth Objects, and upcoming NASA events.  
-The project consists of a React (Vite) frontend, a Flask backend, and a Dockerized deployment environment.
-Our motivation for this project was to simplify and ease the access of infromation from NASA and other Space related APIs.
-As such, users can find relevant, up-to-date space data and information all in one application.
+- Space Hub is a full stack web application that aims to aggregate NASA data into a single, unified dashboard.  
+- It provides users with access to various resources and APIs: Astronomy Picture of the Day (APOD), Mars InSight weather data, Near-Earth Objects, and upcoming NASA events.  
+- The project consists of a React (Vite) frontend, a Flask backend, and a Dockerized deployment environment.
+- Our motivation for this project was to simplify and ease the access of infromation from NASA and other Space related APIs.
+- As such, users can find relevant, up-to-date space data and information all in one application.
 
 ---
 
@@ -46,6 +46,17 @@ Before running the project, ensure you have:
 
 - Docker Desktop (for Windows/macOS) or Docker Engine (for Linux)
 - Git
+
+---
+## Important Note Before Running
+
+This application uses a demo NASA API key.
+Because the demo key is rate limited, users may encounter request limits during extended use.
+If you wish to avoid this, users are encouraged to register for a free NASA API key at: [https://api.nasa.gov/](url)
+
+#### You must then access the /.env file and change the NASA_API_KEY to your key.
+
+---
 
 ##  Running the Project With Docker
 
